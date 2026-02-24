@@ -102,3 +102,48 @@ export async function sendVerificationEmail({
         html,
     });
 }
+
+type TestEmailInput = {
+    to: string;
+    displayName?: string | null;
+};
+
+export async function sendTestEmail({
+    to,
+    displayName,
+}: TestEmailInput) {
+    const transporter = createTransport();
+    const safeName = displayName?.trim() || "there";
+    const subject = "Test email from ChatGPT Mimic AI";
+
+    const text = [
+        `Hi ${safeName},`,
+        "",
+        "This is a test email from your ChatGPT Mimic AI app.",
+        "If you received this message, SMTP configuration works.",
+        "",
+        "ChatGPT AI Mimic Team",
+    ].join("\n");
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; background-color: #f8fafc; padding: 32px;">
+        <div style="max-width: 560px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; overflow: hidden;">
+          <div style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 18px 24px;">
+            <div style="font-size: 16px; letter-spacing: 0.12em; color: #cbd5f5; text-transform: uppercase;">ChatGPT Mimic AI</div>
+          </div>
+          <div style="padding: 26px 24px;">
+            <h2 style="margin: 0 0 12px; color: #0f172a;">Test email successful</h2>
+            <p style="margin: 0; color: #475569;">Hi ${safeName}, your SMTP settings are working.</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    await transporter.sendMail({
+        from: SMTP_FROM,
+        to,
+        subject,
+        text,
+        html,
+    });
+}

@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { askAssistant } from "../services/apiClient";
+import { sendTestEmail } from "../services/mailService";
 import {
   login,
   register,
@@ -36,6 +37,8 @@ export function AppShell() {
   const [verifyEmail, setVerifyEmail] = useState<string | null>(null);
   const [verifyDisplayName, setVerifyDisplayName] = useState<string | null>(null);
   const [verifyStatus, setVerifyStatus] = useState<string | null>(null);
+  const [mailTestLoading, setMailTestLoading] = useState(false);
+  const [mailTestStatus, setMailTestStatus] = useState<string | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => observeAuthState(setUser), []);
@@ -167,6 +170,26 @@ export function AppShell() {
     }
   };
 
+  const onSendTestEmail = async () => {
+    if (!user) {
+      setAuthOpen(true);
+      setMailTestStatus("Sign in first to send a test email.");
+      return;
+    }
+
+    setMailTestStatus(null);
+    setMailTestLoading(true);
+    try {
+      await sendTestEmail(user.email);
+      setMailTestStatus(`Test email sent to ${user.email}.`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to send test email.";
+      setMailTestStatus(message);
+    } finally {
+      setMailTestLoading(false);
+    }
+  };
+
   const handleLogout = () => {
     void logout();
   };
@@ -195,6 +218,10 @@ export function AppShell() {
             Sign in
           </button>
         )}
+        <button type="button" className="ghost-button" onClick={onSendTestEmail} disabled={mailTestLoading}>
+          {mailTestLoading ? "Sending test email..." : "Send test email"}
+        </button>
+        {mailTestStatus ? <p className="muted">{mailTestStatus}</p> : null}
         <p className="muted">
           Notice that before first Sign In - you need to configure firebase in /src/services/firebase.ts
         </p>

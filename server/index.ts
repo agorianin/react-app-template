@@ -2,7 +2,7 @@ import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getAiReply } from "./aiProvider.js";
-import { sendVerificationEmail } from "./mailer.js";
+import { sendTestEmail, sendVerificationEmail } from "./mailer.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,6 +52,26 @@ app.post("/api/auth/send-verification-link", async (req, res) => {
     res.json({ ok: true });
   } catch {
     res.status(500).json({ error: "Failed to send verification email." });
+  }
+});
+
+app.post("/api/mail/send-test", async (req, res) => {
+  const email = typeof req.body?.email === "string" ? req.body.email.trim() : "";
+  const displayName = typeof req.body?.displayName === "string" ? req.body.displayName.trim() : "";
+
+  if (!email) {
+    res.status(400).json({ error: "Email is required." });
+    return;
+  }
+
+  try {
+    await sendTestEmail({
+      to: email,
+      displayName: displayName || (email.split("@")[0] ?? "there")
+    });
+    res.json({ ok: true });
+  } catch {
+    res.status(500).json({ error: "Failed to send test email." });
   }
 });
 
