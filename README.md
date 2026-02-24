@@ -1,3 +1,5 @@
+Read the full story: https://medium.com/@artem.isr/next-step-from-vibe-codding-to-webapp-1f7b20345bdd
+
 # ChatGPT Mimic App (React + Backend Proxy)
 
 Small React application that mimics a ChatGPT-like layout with:
