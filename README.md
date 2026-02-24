@@ -34,6 +34,13 @@ For verification emails, configure SMTP variables from `.env.example`.
 For correct Sign In - you need to register with Firebase console and provide 
 details in `/services/firebase.ts`
 
+In order to send mail you need to configure next environment variables: SMTP_HOST,
+SMTP_PORT,
+SMTP_USER,
+SMTP_PASS,
+SMTP_FROM,
+SMTP_SECURE,
+
 ## Build and run
 ```bash
 npm run build
